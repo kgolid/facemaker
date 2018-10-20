@@ -1,6 +1,8 @@
 import os
 import random
+import uuid
 from svgpathtools import svg2paths, wsvg, disvg
+from svgpathtools.paths2svg import big_bounding_box
 
 def align_components(eyes, nose, mouth, height):
     nose_min, nose_max, _, _ = big_bounding_box(nose)
@@ -27,19 +29,24 @@ def align_components(eyes, nose, mouth, height):
 
 
 def get_paths_from_directory(dirpath, feature_type):
-    svgs = filter(lambda fi: fi.endswith(".svg"), os.listdir(dirpath))
+    svgs = list(filter(lambda fi: fi.endswith(".svg"), os.listdir(dirpath)))
     chosen_svg = random.choice(svgs)
     paths, _ = svg2paths(dirpath + chosen_svg)
-    return scale_and_align(paths, feature_type)
+    return paths
 
 
 def main():
-    eyepaths = get_paths_from_directory('./faces/eyes/', 'EYES')
-    nosepaths = get_paths_from_directory('./faces/noses/', 'NOSE')
-    mouthpaths = get_paths_from_directory('./faces/mouths/', 'MOUTH')
+    height = 14.5
+    folder = './input'
 
-    wsvg(facepaths)
+    eyepaths = get_paths_from_directory(folder + '/eyes/', 'EYES')
+    nosepaths = get_paths_from_directory(folder +  '/nose/', 'NOSE')
+    mouthpaths = get_paths_from_directory(folder + '/mouth/', 'MOUTH')
+
     facepaths = align_components(eyepaths, nosepaths, mouthpaths, height)
+    filename = 'output/' + uuid.uuid4().hex + '.svg'
+    
+    wsvg(facepaths, filename=filename)
 
 
 if __name__ == '__main__':
