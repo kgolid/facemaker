@@ -48,6 +48,4 @@ def main():
     
     wsvg(facepaths, filename=filename)
 
-
-if __name__ == '__main__':
-    main()
+    return filename
